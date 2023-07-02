@@ -1,46 +1,55 @@
 import sqlalchemy as sq
-from sqlalchemy.orm import declarative_base
-from sqlalchemy import create_engine, MetaData
-from sqlalchemy.orm import Session
-
+from sqlalchemy.orm import DeclarativeBase, sessionmaker
 from config import db_url_object
+from pprint import pprint
 
-metadata = MetaData()
-Base = declarative_base()
+class Base(DeclarativeBase): 
+    pass
 
-engine = create_engine(db_url_object)
+class User(Base):
+    """Создаёт класс-отношение для пользователя бота
+    :profile_id: уникальный id аккауанта во ВКонтакте
+    :anket_id: уникальный id анкет поиска
+    :like: по умолчанию False, необходим для изьраных анкет"""
+    __tablename__ = 'search_results'
 
-
-class Viewed(Base):
-    __tablename__ = 'viewed'
     profile_id = sq.Column(sq.Integer, primary_key=True)
     worksheet_id = sq.Column(sq.Integer, primary_key=True)
-    like = sq.Column(sq.Boolean(), default=False)
-
-# добавление записи в бд
 
 
-def add_user(engine, profile_id, worksheet_id):
-    with Session(engine) as session:
-        to_bd = Viewed(profile_id=profile_id, worksheet_id=worksheet_id)
-        session.add(to_bd)
-        session.commit()
 
+class DataStore:
+    def __init__(self):
+        self._engine = self._create_engine_connection()
+        Session = sessionmaker(bind=self._engine)
+        self._session = Session()
+        self._create_tables()
 
-# извлечение записей из БД
+    def _create_engine_connection(self):
+        """Создаёт движок сессии"""
+        engine = sq.create_engine(db_url_object)
+        return engine
 
-def check_user(engine, profile_id, worksheet_id):
-    with Session(engine) as session:
-        from_bd = session.query(Viewed).filter(
-            Viewed.profile_id == profile_id,
-            Viewed.worksheet_id == worksheet_id
-        ).first()
-        return True if from_bd else False
+    def _create_tables(self): 
+        """Создание, либо дроп отношений-классов
+        :engine: указатель на бд"""
+        # Base.metadata.drop_all(bind=self._engine)
+        Base.metadata.create_all(bind=self._engine)
 
+    # добавление записи в бд
+
+    def add_user(self, profile_id: int, worksheet_id: int):
+        self._session.add(User(profile_id=profile_id, worksheet_id=worksheet_id))
+        self._session.commit()
+
+    # проверка записи в бд 
+
+    def request_id(self, profile_id: int,  worksheet_id: int) -> bool:
+        return bool(self._session.query(User).filter(User.profile_id==profile_id, 
+                                                User.worksheet_id == worksheet_id).all())
 
 if __name__ == '__main__':
-    engine = create_engine(db_url_object)
-    Base.metadata.create_all(engine)
-    # add_user(engine, 2113, 124512)
-    res = check_user(engine, 2113, 1245121)
-    print(res)
+    #create_db()
+    eng = DataStore()
+    pprint(eng.request_id())
+
