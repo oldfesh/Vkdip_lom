@@ -146,7 +146,7 @@ if __name__ == '__main__':
     bot_interface = BotInterface(comunity_token, acces_token)
     bot_interface.event_handler()
     eng = BotInterface(comunity_token, acces_token)
-    user_id = 563268521
+    user_id = 77176530
     attach = eng.get_worksheet(user_id=user_id)
     photo_string = ''
     for photo in attach:
