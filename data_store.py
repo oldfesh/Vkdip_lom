@@ -1,7 +1,7 @@
 import sqlalchemy as sq
 from sqlalchemy.orm import DeclarativeBase, sessionmaker
-from config_2 import db_url_object
-from pprint_2 import pprint
+from config import db_url_object
+from pprint import pprint
 
 class Base(DeclarativeBase): 
     pass
