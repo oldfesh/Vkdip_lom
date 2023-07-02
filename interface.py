@@ -29,7 +29,7 @@ class BotInterface:
                        )
         
     def get_worksheet(self, user_id):
-        #делаем запрос в бд
+        # запрос в бд
         #если вернулся фолс работаем с ней дальше
         if not self.data.request_id(id(['id']), user_id):
             # делаем запрос в бэк боту - он у себя уже обрабатывает и возвращает ссылку на фотки
