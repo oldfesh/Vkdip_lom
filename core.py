@@ -6,7 +6,7 @@ import vk_api
 from vk_api.exceptions import ApiError
 from datetime import date
 
-from config_2 import acces_token
+from config import acces_token
 
 
 class VKTools:
