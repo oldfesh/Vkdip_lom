@@ -3,9 +3,9 @@ import vk_api
 from vk_api.longpoll import VkLongPoll, VkEventType
 from vk_api.utils import get_random_id
 
-from config_2 import comunity_token, acces_token
-from core_2 import VKTools
-from data_store_2 import DataStore
+from config import comunity_token, acces_token
+from core import VKTools
+from data_store import DataStore
 
 
 class BotInterface:
